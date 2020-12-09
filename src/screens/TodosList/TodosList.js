@@ -11,10 +11,17 @@ import {
   TextInput,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
+import {addTask, deleteTask} from '../../redux/actions/taskActions';
+
+import {useSelector, useDispatch} from 'react-redux';
 export const TodosList = () => {
-  const [data, setData] = useState([{id: 1, title: 'Task 1', active: false}]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [title, setTitle] = useState('');
+
+  const dispatch = useDispatch();
+  const tasks = useSelector((state) => state.tasks);
+  console.log(tasks);
+
   const renderItem = ({item, index}) => {
     return (
       <View style={styles.TaskItem}>
@@ -37,21 +44,22 @@ export const TodosList = () => {
     setIsModalVisible(true);
   };
   const saveTitle = () => {
-    let newArr = [...data];
-    newArr.push({id: newArr.length + 1, title: title, active: false});
-    setData(newArr);
+    dispatch(
+      addTask({id: tasks.tasks.length + 1, title: title, active: false}),
+    );
   };
   const setToggleCheckBox = (value, index) => {
-    let newArr = [...data];
+    /*   let newArr = [...data];
 
     newArr[index].active = !newArr[index].active;
-    setData(newArr);
+    setData(newArr); */
+    dispatch(deleteTask(index));
   };
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.contentContainer}>
         <Text style={styles.title}>Todos</Text>
-        <FlatList data={data} renderItem={renderItem} />
+        <FlatList data={tasks.tasks} renderItem={renderItem} />
         <TouchableOpacity style={styles.AddBtnWrapper} onPress={openModal}>
           <Image
             style={styles.addIcon}
